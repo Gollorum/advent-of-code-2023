@@ -1,6 +1,6 @@
 module Main (main) where
 
-import D01
+import D02
 
 main :: IO ()
 --main = execSample
