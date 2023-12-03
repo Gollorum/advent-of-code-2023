@@ -26,6 +26,7 @@ library
   exposed-modules:
       D01
       D02
+      D03
       Lib
   other-modules:
       Paths_advent_of_code_y2023
