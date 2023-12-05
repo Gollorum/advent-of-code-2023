@@ -1,7 +1,7 @@
 module Main (main) where
 
-import D04
+import D05
 
 main :: IO ()
---main = execSample
-main = execFinal
+main = execSample
+--main = execFinal
