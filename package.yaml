@@ -24,6 +24,7 @@ dependencies:
 - text >= 2.0.2
 - regex-tdfa
 - split
+- containers
 
 ghc-options:
 - -Wall
