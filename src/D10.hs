@@ -14,7 +14,6 @@ exec :: String -> IO ()
 exec path = do
   content <- readFile path
   let ls = lines content
---  let res = mapM (mapM parse) ls
   let res = do
             grid <- mapM (mapM parse) ls
             y <- case findIndex (elem Start) grid of
