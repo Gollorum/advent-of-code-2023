@@ -35,6 +35,8 @@ library
       D09
       D10
       D11
+      D12
+      D13
       Lib
   other-modules:
       Paths_advent_of_code_y2023
