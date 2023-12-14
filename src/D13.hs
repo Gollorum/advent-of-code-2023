@@ -17,9 +17,6 @@ exec path = do
   let verticals = sum (map (verticalReflectionAt 1) ls)
   print (verticals + 100 * horizontals)
 
---reflectionsAt :: [String] -> (Int, Int)
---reflectionsAt rows = (horizontalReflectionAt rows, horizontalReflectionAt (transpose rows))
-
 horizontalReflectionAt :: Int -> [String] -> Int
 horizontalReflectionAt smudges rows = case find (\i -> smudges == diff (reverse (take i rows)) (drop i rows)) [1..(length rows - 1)] of
   Just row -> row
