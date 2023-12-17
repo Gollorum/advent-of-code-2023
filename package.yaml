@@ -26,6 +26,7 @@ dependencies:
 - split
 - containers
 - array
+- pqueue
 
 ghc-options:
 - -Wall

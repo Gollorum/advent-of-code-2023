@@ -3,6 +3,9 @@ module Lib
     , lastElemIndex
     , anyways
     , isInBounds
+    , arrayFrom
+    , show2dArray
+    , (?)
     ) where
 
 import Data.Array
@@ -27,3 +30,23 @@ isInBounds (x, y) arr =
   let
     ((minX, minY), (maxX, maxY)) = bounds arr
   in minX <= x && minY <= y && maxX >= x && maxY >= y
+  
+arrayFrom :: [[a]] -> Array (Int, Int) a
+arrayFrom rows =
+  let
+    height = length rows
+    width = length $ head rows
+    elementsWithIndex = do
+                      (y, row) <- zip [0..] rows
+                      (x, e) <- zip [0..] row
+                      return ((x, y), e)
+  in array ((0, 0), (width-1, height-1)) elementsWithIndex
+
+show2dArray :: Show a => Array (Int, Int) a -> String
+show2dArray arr =
+  let
+    ((minX, minY), (maxX, maxY)) = bounds arr
+  in foldl (\res y -> res ++ foldl (\l x -> l ++ show (arr!(x, y))) "" [minY..maxY] ++ "\n") "" [minX..maxX]
+
+(?) :: Ix i => Array i a -> i -> Maybe a
+(?) arr i = if inRange (bounds arr) i then Just (arr!i) else Nothing
