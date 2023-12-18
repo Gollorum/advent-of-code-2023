@@ -3,7 +3,6 @@
 module D14 (execSample, execFinal) where
 
 import Lib (count)
-import Debug.Trace
 import qualified Data.Map as Map
 import Data.Int(Int64)
 

@@ -41,6 +41,7 @@ library
       D15
       D16
       D17
+      D18
       Lib
   other-modules:
       Paths_advent_of_code_y2023
