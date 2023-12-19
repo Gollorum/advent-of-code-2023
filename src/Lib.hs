@@ -6,6 +6,7 @@ module Lib
     , arrayFrom
     , show2dArray
     , (?)
+    , concatMapM
     ) where
 
 import Data.Array
@@ -50,3 +51,6 @@ show2dArray arr =
 
 (?) :: Ix i => Array i a -> i -> Maybe a
 (?) arr i = if inRange (bounds arr) i then Just (arr!i) else Nothing
+
+concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
+concatMapM f a = concat <$> mapM f a
