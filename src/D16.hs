@@ -17,11 +17,11 @@ exec path = do
   let res = do
             originalGrid <- mapM (mapM parse) ls
             let grid = fmap (\t -> (t, BeamState False False False False)) $ arrayFrom originalGrid
-            let ((minX, minY), (maxX, maxY)) = bounds grid
-            let allEntries = [((minX, y), R) | y <- [minY..maxY]] ++
-                             [((maxX, y), L) | y <- [minY..maxY]] ++
-                             [((x, minY), D) | x <- [minX..maxX]] ++
-                             [((x, maxY), U) | x <- [minX..maxX]]
+            let ((Pos minX minY), (Pos maxX maxY)) = bounds grid
+            let allEntries = [((Pos minX y), R) | y <- [minY..maxY]] ++
+                             [((Pos maxX y), L) | y <- [minY..maxY]] ++
+                             [((Pos x minY), D) | x <- [minX..maxX]] ++
+                             [((Pos x maxY), U) | x <- [minX..maxX]]
             let allPossibleEndStates = map (advanceBeams grid) $ map singleton allEntries
             return $ show $ maximum $ map (\g -> length $ filter isEnergized $ elems g) allPossibleEndStates
   anyways putStrLn res
@@ -65,7 +65,7 @@ isEnergizedFrom (BeamState _ _ _ ret) R = ret
 isEnergized :: (Tile, BeamState) -> Bool
 isEnergized (_, BeamState u r d l) = u || r || d || l
 
-advanceBeams :: Array (Int, Int) (Tile, BeamState) -> [((Int, Int), Dir)] -> Array (Int, Int) (Tile, BeamState)
+advanceBeams :: Array Pos (Tile, BeamState) -> [(Pos, Dir)] -> Array Pos (Tile, BeamState)
 advanceBeams grid [] = grid
 advanceBeams grid ((pos, _) : t) | not (isInBounds pos grid) = advanceBeams grid t
 advanceBeams grid ((pos, dir) : t) =
@@ -76,7 +76,7 @@ advanceBeams grid ((pos, dir) : t) =
     else let (newGrid, additionalDirs) = advance grid pos dir tile currentState
       in advanceBeams newGrid (additionalDirs ++ t)
 
-advance :: Array (Int, Int) (Tile, BeamState) -> (Int, Int) -> Dir -> Tile -> BeamState -> (Array (Int, Int) (Tile, BeamState), [((Int, Int), Dir)])
+advance :: Array Pos (Tile, BeamState) -> Pos -> Dir -> Tile -> BeamState -> (Array Pos (Tile, BeamState), [(Pos, Dir)])
 advance grid pos dir tile currentState =
   let
     next = nextDirs tile dir
@@ -89,11 +89,11 @@ energize R (BeamState u _ d l) = BeamState u True d l
 energize D (BeamState u r _ l) = BeamState u r True l
 energize L (BeamState u r d _) = BeamState u r d True
 
-step :: Dir -> (Int, Int) -> (Int, Int)
-step U (x, y) = (x, y-1)
-step R (x, y) = (x+1, y)
-step D (x, y) = (x, y+1)
-step L (x, y) = (x-1, y)
+step :: Dir -> Pos -> Pos
+step U (Pos x y) = (Pos x (y-1))
+step R (Pos x y) = (Pos (x+1) y)
+step D (Pos x y) = (Pos x (y+1))
+step L (Pos x y) = (Pos (x-1) y)
 
 nextDirs :: Tile -> Dir -> [Dir]
 nextDirs Empty dir = [dir]

@@ -1,6 +1,6 @@
 module D18 (execSample, execFinal) where
 
-import Lib
+import Lib (anyways)
 import Text.Regex.TDFA
 import Data.Char (isDigit, digitToInt, ord)
 import Data.Int(Int64)

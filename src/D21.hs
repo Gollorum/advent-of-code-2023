@@ -61,7 +61,6 @@ instance Show Tile where
   show Rock = "#"
   show Occupied = "O"
 
-data Pos = Pos Int Int deriving (Eq, Ord, Show, Ix)
 xOf :: Pos -> Int
 xOf (Pos x _) = x
 yOf :: Pos -> Int

@@ -5,8 +5,10 @@ module Lib
     , isInBounds
     , arrayFrom
     , show2dArray
+    , show2dArrayWith
     , (?)
     , concatMapM
+    , Pos (..)
     ) where
 
 import Data.Array
@@ -26,13 +28,16 @@ anyways f e = case e of
   Left a -> f a
   Right a -> f a
   
-isInBounds :: (Int, Int) -> (Array (Int, Int) a) -> Bool
-isInBounds (x, y) arr =
+
+data Pos = Pos Int Int deriving (Show, Eq, Ord, Ix)
+  
+isInBounds :: Pos -> Array Pos a -> Bool
+isInBounds (Pos x y) arr =
   let
-    ((minX, minY), (maxX, maxY)) = bounds arr
+    ((Pos minX minY), (Pos maxX maxY)) = bounds arr
   in minX <= x && minY <= y && maxX >= x && maxY >= y
   
-arrayFrom :: [[a]] -> Array (Int, Int) a
+arrayFrom :: [[a]] -> Array Pos a
 arrayFrom rows =
   let
     height = length rows
@@ -40,14 +45,17 @@ arrayFrom rows =
     elementsWithIndex = do
                       (y, row) <- zip [0..] rows
                       (x, e) <- zip [0..] row
-                      return ((x, y), e)
-  in array ((0, 0), (width-1, height-1)) elementsWithIndex
+                      return (Pos x y, e)
+  in array (Pos 0 0, Pos (width-1) (height-1)) elementsWithIndex
 
-show2dArray :: Show a => Array (Int, Int) a -> String
-show2dArray arr =
+show2dArray :: Show a => Array Pos a -> String
+show2dArray = show2dArrayWith show
+
+show2dArrayWith :: (a -> String) -> Array Pos a -> String
+show2dArrayWith shw arr =
   let
-    ((minX, minY), (maxX, maxY)) = bounds arr
-  in foldl (\res y -> res ++ foldl (\l x -> l ++ show (arr!(x, y))) "" [minY..maxY] ++ "\n") "" [minX..maxX]
+    (Pos minX minY, Pos maxX maxY) = bounds arr
+  in foldl (\res y -> res ++ foldl (\l x -> l ++ shw (arr!Pos x y)) "" [minY..maxY] ++ "\n") "" [minX..maxX]
 
 (?) :: Ix i => Array i a -> i -> Maybe a
 (?) arr i = if inRange (bounds arr) i then Just (arr!i) else Nothing

@@ -19,22 +19,22 @@ exec :: String -> IO ()
 exec path = do
   content <- readFile path :: IO String
   let ls = lines content :: [String]
-  let grid = arrayFrom $ map (map digitToInt) ls :: Array (Int, Int) Int
+  let grid = arrayFrom $ map (map digitToInt) ls :: Array Pos Int
   let (minB, maxB) = bounds grid
-  let queue = Queue.fromList [PathInfo (0,0) 0 (estimatedCost grid (0,0)) Vertical [(0,0)], PathInfo (0,0) 0 (estimatedCost grid (0,0)) Horizontal [(0,0)]] :: Queue.MinQueue PathInfo
+  let queue = Queue.fromList [PathInfo (Pos 0 0) 0 (estimatedCost grid (Pos 0 0)) Vertical [(Pos 0 0)], PathInfo (Pos 0 0) 0 (estimatedCost grid (Pos 0 0)) Horizontal [(Pos 0 0)]] :: Queue.MinQueue PathInfo
   let minA = (minB, Horizontal)
   let maxA = (maxB, Vertical)
   let hasBeenHandled = array (minA, maxA) [(i, False) | i <- enumerate minA maxA]
   print (totalCost grid hasBeenHandled queue)
 
-enumerate :: ((Int, Int), Orientation) -> ((Int, Int), Orientation) -> [((Int, Int), Orientation)]
-enumerate ((minX, minY), minDir) ((maxX, maxY), maxDir) = do
+enumerate :: (Pos, Orientation) -> (Pos, Orientation) -> [(Pos, Orientation)]
+enumerate ((Pos minX minY), minDir) ((Pos maxX maxY), maxDir) = do
   x <- [minX..maxX]
   y <- [minY..maxY]
   dir <- [minDir..maxDir]
-  return ((x, y), dir)
+  return ((Pos x y), dir)
 
-data PathInfo = PathInfo {position :: (Int, Int), costSoFar :: Int, expectedFutureCost :: Int, orientation :: Orientation, history :: [(Int, Int)]} deriving (Show)
+data PathInfo = PathInfo {position :: Pos, costSoFar :: Int, expectedFutureCost :: Int, orientation :: Orientation, history :: [Pos]} deriving (Show)
 instance Eq PathInfo where
   (PathInfo posL _ _ dirL _) == (PathInfo posR _ _ dirR _) = (posL == posR) && (dirL == dirR)
 instance Ord PathInfo where
@@ -50,13 +50,13 @@ perpTo :: Orientation -> Orientation
 perpTo Vertical = Horizontal
 perpTo Horizontal = Vertical
 
-(+>) :: (Int, Int) -> Dir -> (Int, Int)
-(+>) (x, y) U = (x, y-1)
-(+>) (x, y) R = (x+1, y)
-(+>) (x, y) D = (x, y+1)
-(+>) (x, y) L = (x-1, y)
+(+>) :: Pos -> Dir -> Pos
+(+>) (Pos x y) U = (Pos x (y-1))
+(+>) (Pos x y) R = (Pos (x+1) y)
+(+>) (Pos x y) D = (Pos x (y+1))
+(+>) (Pos x y) L = (Pos (x-1) y)
 
-totalCost :: Array (Int, Int) Int -> Array ((Int, Int), Orientation) Bool -> Queue.MinQueue PathInfo -> Either String Int
+totalCost :: Array Pos Int -> Array (Pos, Orientation) Bool -> Queue.MinQueue PathInfo -> Either String Int
 totalCost _ _ q | Queue.null q = Left "Failed to find destination, queue empty"
 totalCost grid _ (getMin -> Just (PathInfo pos c _ _ h)) | pos==snd (bounds grid) = Right c
 totalCost grid hasBeenHandled q | any (\(PathInfo pos _ _ dir _) -> hasBeenHandled!(pos, dir)) (getMin q) = totalCost grid hasBeenHandled (deleteMin q)
@@ -68,15 +68,15 @@ totalCost grid hasBeenHandled q =
     nextUp = nextOptions grid hasNowBeenHandled pi
   in totalCost grid hasNowBeenHandled (foldr insert newQ nextUp)
 
-estimatedCost :: Array (Int, Int) a -> (Int, Int) -> Int
-estimatedCost arr (posX, posY) =
-  let (_, (destX, destY)) = bounds arr
+estimatedCost :: Array Pos a -> Pos -> Int
+estimatedCost arr (Pos posX posY) =
+  let (_, (Pos destX destY)) = bounds arr
   in abs (destX - posX) + abs (destY - posY)
 
-nextOptions :: Array (Int, Int) Int -> Array ((Int, Int), Orientation) Bool -> PathInfo -> [PathInfo]
+nextOptions :: Array Pos Int -> Array (Pos, Orientation) Bool -> PathInfo -> [PathInfo]
 nextOptions grid hasBeenHandled (PathInfo pos cost _ dir h) =
   let
-    advance :: Dir -> ((Int, Int), Int) -> Maybe ((Int, Int), Int)
+    advance :: Dir -> (Pos, Int) -> Maybe (Pos, Int)
     advance = \d (p, c) ->
               let p' = p +> d
               in fmap (\c' -> (p', c + c')) (grid?p')
@@ -93,7 +93,7 @@ mutations f i a = case f a of
   Just a' -> a' : mutations f (i-1) a'
   Nothing -> []
 
-toValidInfo :: Array (Int, Int) Int -> Array ((Int, Int), Orientation) Bool -> ((Int, Int), Int, Orientation, [(Int, Int)]) -> Maybe PathInfo
+toValidInfo :: Array Pos Int -> Array (Pos, Orientation) Bool -> (Pos, Int, Orientation, [Pos]) -> Maybe PathInfo
 toValidInfo grid hasBeenHandled (pos, cost, dir, h) = do
   () <- if hasBeenHandled!(pos, dir) then Nothing else Just ()
   return $ PathInfo pos cost (estimatedCost grid pos) dir (pos:h)
