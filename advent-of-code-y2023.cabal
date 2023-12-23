@@ -46,6 +46,7 @@ library
       D20
       D21
       D22
+      D23
       Lib
   other-modules:
       Paths_advent_of_code_y2023
@@ -60,6 +61,7 @@ library
     , containers
     , pqueue
     , regex-tdfa
+    , safe
     , split
     , text >=2.0.2
   default-language: Haskell2010
@@ -80,6 +82,7 @@ executable advent-of-code-y2023-exe
     , containers
     , pqueue
     , regex-tdfa
+    , safe
     , split
     , text >=2.0.2
   default-language: Haskell2010
@@ -101,6 +104,7 @@ test-suite advent-of-code-y2023-test
     , containers
     , pqueue
     , regex-tdfa
+    , safe
     , split
     , text >=2.0.2
   default-language: Haskell2010

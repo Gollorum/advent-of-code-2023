@@ -27,6 +27,7 @@ dependencies:
 - containers
 - array
 - pqueue
+- safe
 
 ghc-options:
 - -Wall

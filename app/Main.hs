@@ -1,9 +1,9 @@
 module Main (main) where
 
-import D22
+import D23
 
 main :: IO ()
 --main = execSample
 main = execFinal
---main = execSamplePart2
+--main = execSampl  ePart2
 --main = execFinalPart2

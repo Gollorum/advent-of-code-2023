@@ -6,6 +6,7 @@ module Lib
     , arrayFrom
     , show2dArray
     , show2dArrayWith
+    , show2dArrayWithIdx
     , (?)
     , concatMapM
     , Pos (..)
@@ -56,6 +57,12 @@ show2dArrayWith shw arr =
   let
     (Pos minX minY, Pos maxX maxY) = bounds arr
   in foldl (\res y -> res ++ foldl (\l x -> l ++ shw (arr!Pos x y)) "" [minY..maxY] ++ "\n") "" [minX..maxX]
+
+show2dArrayWithIdx :: (Pos -> a -> String) -> Array Pos a -> String
+show2dArrayWithIdx shw arr =
+  let
+    (Pos minX minY, Pos maxX maxY) = bounds arr
+  in foldl (\res y -> res ++ foldl (\l x -> l ++ shw (Pos x y) (arr!Pos x y)) "" [minY..maxY] ++ "\n") "" [minX..maxX]
 
 (?) :: Ix i => Array i a -> i -> Maybe a
 (?) arr i = if inRange (bounds arr) i then Just (arr!i) else Nothing
