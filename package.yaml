@@ -28,6 +28,7 @@ dependencies:
 - array
 - pqueue
 - safe
+- random
 
 ghc-options:
 - -Wall
