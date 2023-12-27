@@ -29,6 +29,7 @@ dependencies:
 - pqueue
 - safe
 - random
+- mfsolve
 
 ghc-options:
 - -Wall

@@ -61,6 +61,7 @@ library
       array
     , base >=4.7 && <5
     , containers
+    , mfsolve
     , pqueue
     , random
     , regex-tdfa
@@ -83,6 +84,7 @@ executable advent-of-code-y2023-exe
     , array
     , base >=4.7 && <5
     , containers
+    , mfsolve
     , pqueue
     , random
     , regex-tdfa
@@ -106,6 +108,7 @@ test-suite advent-of-code-y2023-test
     , array
     , base >=4.7 && <5
     , containers
+    , mfsolve
     , pqueue
     , random
     , regex-tdfa
